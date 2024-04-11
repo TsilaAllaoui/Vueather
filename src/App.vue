@@ -10,11 +10,16 @@ import MainComponent from './components/MainComponent.vue'
 
 <style lang="scss">
 @import './assets/variables.scss';
+
 body {
   margin: 0;
   height: 100vh;
   width: 100vw;
   background-color: $main;
+
+  * {
+    font-family: 'Ubuntu';
+  }
 
   #app {
     display: flex !important;

@@ -2476,7 +2476,7 @@ vue-template-compiler@^2.7.14:
     de-indent "^1.0.2"
     he "^1.2.0"
 
-vue-tsc@^2.0.6:
+vue-tsc@^2.0.0:
   version "2.0.12"
   resolved "https://registry.yarnpkg.com/vue-tsc/-/vue-tsc-2.0.12.tgz#e8217c0ebe4327fa828e9871f9d58f10c93ee983"
   integrity sha512-thlBBWlPYrNdba535oDdxz7PRUufZgRZRVP5Aql5wBVpGSWSeqou4EzFXeKVoZr59lp9hJROubDVzlhACmcEhg==
