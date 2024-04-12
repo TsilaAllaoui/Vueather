@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref } from 'vue';
 
 const time = ref('');
+const dataReady = ref(false);
 
 interface IWeather {
   locationName: String;
@@ -73,6 +74,8 @@ const setTime = async () => {
             weather.temp_f = data.current.temp_f;
             weather.uv = data.current.uv;
 
+            dataReady.value = true;
+
             console.log(weather);
           })
           .catch((err) => console.log(err));
@@ -85,40 +88,122 @@ onMounted(() => setTime());
 </script>
 
 <template>
-  <div class="current-weather">
-    <b>Current Weather</b>
-    <br />{{ time }}
+  <div v-if="dataReady" class="current-weather">
+    <div class="header">
+      <p><b>Current Weather</b></p>
+      <p>{{ time }}</p>
+    </div>
     <div class="condition">
-      <img :src="weather.icon" />
+      <img :src="weather.icon.toString()" />
       <div class="temp">
-        <p>{{ weather.temp_c }} °C</p>
+        <p>{{ weather.temp_c }} <span>°C</span></p>
         <p>{{ weather.condition }}</p>
       </div>
     </div>
     <div class="infos">
       <div class="info">
-        {{ weather.cloud }}
+        <v-icon name="md-waves" />
+        <span>{{ weather.cloud }}</span>
       </div>
       <div class="info">
-        {{ weather.humidity }}
+        <v-icon name="ri-drop-line" />
+        <span>{{ weather.humidity }}</span>
       </div>
       <div class="info">
-        {{ weather.gust_kph }}
+        <v-icon name="ri-windy-line" />
+        <span>{{ weather.gust_kph }}</span>
       </div>
       <div class="info">
-        {{ weather.uv }}
+        <v-icon name="pr-sun" />
+        <span>{{ weather.uv }}</span>
       </div>
     </div>
+  </div>
+  <div v-else class="loading">
+    <v-icon name="pr-spinner" animation="spin" scale="5" />
   </div>
 </template>
 
 <style lang="scss">
 @import '../assets/variables.scss';
 
-.current-weather {
+.current-weather,
+.loading {
   padding: 1rem;
   background-color: $dark;
   border-radius: 10px;
   color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .condition {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    img {
+      width: 50%;
+      height: 100%;
+    }
+
+    .temp {
+      font-size: large;
+
+      p {
+        margin: 0;
+
+        &:first-of-type {
+          font-size: 5rem;
+          font-weight: bolder;
+          display: flex;
+          gap: 1rem;
+
+          span {
+            font-size: 1.25rem;
+          }
+        }
+      }
+    }
+  }
+
+  .infos {
+    display: flex;
+    justify-content: space-between;
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      span {
+        font-size: 1.25rem;
+      }
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+  }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
