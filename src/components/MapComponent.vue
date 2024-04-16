@@ -14,12 +14,15 @@ import VectorSource from 'ol/source/Vector';
 
 const mapRoot = ref(null);
 
+const dataReady = ref(false);
+
 async function getCurrentPosition(): Promise<GeolocationPosition> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocation is not supported by this browser.'));
     } else {
       navigator.geolocation.getCurrentPosition(resolve, reject);
+      dataReady.value = true;
     }
   });
 }
@@ -29,6 +32,7 @@ onMounted(async () => {
   let longitude = 0;
   try {
     const position = await getCurrentPosition();
+
     latitude = position.coords.latitude;
     longitude = position.coords.longitude;
 
@@ -86,7 +90,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div ref="mapRoot" class="map" style="width: 100%; height: 100%"></div>
+  <div v-if="dataReady" ref="mapRoot" class="map" style="width: 100%; height: 100%"></div>
+  <div v-else class="loading">
+    <v-icon name="pr-spinner" animation="spin" scale="5" color="white" />
+  </div>
 </template>
 
 <style lang="scss">

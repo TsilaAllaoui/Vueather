@@ -1,14 +1,107 @@
 <script setup lang="ts">
-import CurrentWeather from './CurrentWeather.vue';
+import CurrentWeather from './CurrentWeatherComponent.vue';
+import ForecastComponent from './ForecastComponent.vue';
 import MapComponent from './MapComponent.vue';
+import { ref, reactive, onMounted } from 'vue';
+import { IWeather } from '@/interfaces/IWeather';
+import { IForecast } from '@/interfaces/IForecast';
+
+const weather: IWeather = reactive({
+  locationName: '',
+  region: '',
+  country: '',
+  temp_f: -1,
+  temp_c: -1,
+  is_day: false,
+  condition: '',
+  icon: '',
+  humidity: -1,
+  gust_mph: -1,
+  gust_kph: -1,
+  uv: -1,
+  cloud: -1
+});
+
+const dataReady = ref(false);
+const unit = ref('c');
+const forecasts: IForecast[] = reactive([]);
+
+onMounted(() => {
+  // Getting weather
+  fetch(import.meta.env.VITE_VUE_APP_IP_API_URL)
+    .then((res) =>
+      res.json().then((data) => {
+        const ip = data.ip;
+
+        const url = new URL(import.meta.env.VITE_VUE_APP_API_URL + 'current.json');
+        url.searchParams.append('key', import.meta.env.VITE_VUE_APP_API_KEY);
+        url.searchParams.append('q', ip);
+
+        fetch(url.toString())
+          .then((res) => res.json())
+          .then((data) => {
+            weather.cloud = data.current.cloud;
+            weather.condition = data.current.condition.text;
+            weather.country = data.location.country;
+            weather.gust_kph = data.current.gust_kph;
+            weather.gust_mph = data.current.gust_mph;
+            weather.humidity = data.current.humidity;
+            weather.icon = data.current.condition.icon;
+            weather.is_day = data.current.is_day;
+            weather.locationName = data.location.name;
+            weather.region = data.location.region;
+            weather.temp_c = data.current.temp_c;
+            weather.temp_f = data.current.temp_f;
+            weather.uv = data.current.uv;
+
+            dataReady.value = true;
+
+            console.log(weather);
+          })
+          .catch((err) => console.log(err));
+
+        const urlForecasts = new URL(import.meta.env.VITE_VUE_APP_API_URL + 'forecast.json');
+        urlForecasts.searchParams.append('key', import.meta.env.VITE_VUE_APP_API_KEY);
+        urlForecasts.searchParams.append('q', ip);
+        urlForecasts.searchParams.append('days', '7');
+
+        fetch(urlForecasts.toString())
+          .then((res) => res.json())
+          .then((data) => {
+            const forecastdays = data.forecast.forecastday;
+            forecastdays.forEach((forecastday: any) => {
+              const forecast: IForecast = {
+                icon: forecastday.day.condition.icon,
+                min_temp_c: forecastday.day.mintemp_c,
+                max_temp_c: forecastday.day.maxtemp_c,
+                min_temp_f: forecastday.day.mintemp_f,
+                max_temp_f: forecastday.day.maxtemp_f,
+                date: forecastday.date
+              };
+
+              forecasts.push(forecast);
+            });
+
+            console.log('Forecasts: ');
+            console.log(forecasts);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+    )
+    .catch((err) => {
+      console.log(err);
+    });
+});
 </script>
 
 <template>
   <div class="main">
-    <CurrentWeather />
+    <CurrentWeather :dataReady="dataReady" :weather="weather" :unit="unit" />
     <MapComponent />
     <div>3</div>
-    <div>4</div>
+    <ForecastComponent :forecasts="forecasts" :unit="unit" />
     <div>5</div>
   </div>
 </template>
@@ -24,6 +117,7 @@ import MapComponent from './MapComponent.vue';
   padding: 1rem;
   row-gap: 1rem;
   column-gap: 1rem;
+  overflow: hidden;
 
   :nth-child(2) {
     grid-column-start: span 2;
