@@ -162,7 +162,6 @@ onMounted(() => setTime());
 
     .temp {
       font-size: large;
-
       p {
         margin: 0;
 

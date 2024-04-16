@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import CurrentWeather from './CurrentWeather.vue';
+import MapComponent from './MapComponent.vue';
 </script>
 
 <template>
   <div class="main">
     <CurrentWeather />
-    <div>2</div>
+    <MapComponent />
     <div>3</div>
     <div>4</div>
     <div>5</div>
