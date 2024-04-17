@@ -35,19 +35,19 @@ onMounted(() => setTime());
       </div>
     </div>
     <div class="infos">
-      <div class="info">
+      <div class="info" title="Cloud">
         <v-icon name="md-waves" />
         <span>{{ weather.cloud }}</span>
       </div>
-      <div class="info">
+      <div class="info" title="Humidity">
         <v-icon name="ri-drop-line" />
         <span>{{ weather.humidity }}</span>
       </div>
-      <div class="info">
+      <div class="info" title="Wind">
         <v-icon name="ri-windy-line" />
         <span>{{ weather.gust_kph }}</span>
       </div>
-      <div class="info">
+      <div class="info" title="UV">
         <v-icon name="pr-sun" />
         <span>{{ weather.uv }}</span>
       </div>
@@ -63,7 +63,7 @@ onMounted(() => setTime());
 
 .current-weather,
 .loading {
-  padding: 1rem;
+  padding: 1rem 2rem;
   background-color: $dark;
   border-radius: 10px;
   color: white;

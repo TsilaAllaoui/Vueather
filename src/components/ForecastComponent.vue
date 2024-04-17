@@ -47,7 +47,7 @@ function formatDate(dateString: string): string {
   justify-content: center;
   background-color: $dark;
   border-radius: 10px;
-  padding: 1rem;
+  padding: 0 1rem;
   color: white;
 
   p {
@@ -58,15 +58,16 @@ function formatDate(dateString: string): string {
   }
 
   & > p {
-    height: 2rem;
     display: flex;
     align-items: center;
+    margin-left: 1rem;
     margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 20px;
   }
 
   .forecast {
     width: 95%;
-    height: 10%;
     display: flex;
     gap: 1rem;
     align-items: center;
