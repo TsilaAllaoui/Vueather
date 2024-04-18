@@ -1,11 +1,29 @@
 <script setup lang="ts">
-import HeaderComponent from './components/HeaderComponent.vue'
-import MainComponent from './components/MainComponent.vue'
+import { reactive } from 'vue';
+import HeaderComponent from './components/HeaderComponent.vue';
+import MainComponent from './components/MainComponent.vue';
+import { ILocation } from './interfaces/ILocation';
+
+const currentLocation: ILocation = reactive<ILocation>({
+  name: '',
+  subname: '',
+  url: '',
+  lat: 0,
+  long: 0
+});
+
+const updateCurrentLocation = (location: ILocation) => {
+  currentLocation.name = location.name;
+  currentLocation.subname = location.subname;
+  currentLocation.url = location.url;
+  currentLocation.lat = location.lat;
+  currentLocation.long = location.long;
+};
 </script>
 
 <template>
-  <HeaderComponent />
-  <MainComponent />
+  <HeaderComponent @current-location="updateCurrentLocation" />
+  <MainComponent :currentLocation="currentLocation" />
 </template>
 
 <style lang="scss">

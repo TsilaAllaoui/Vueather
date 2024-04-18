@@ -2,11 +2,12 @@
 import CurrentWeather from './CurrentWeatherComponent.vue';
 import ForecastComponent from './ForecastComponent.vue';
 import MapComponent from './MapComponent.vue';
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { IWeather } from '@/interfaces/IWeather';
 import { IForecast } from '@/interfaces/IForecast';
 import { IHourlyForecast } from '@/interfaces/IHourlyForecast';
 import HourlyForecastComponent from './HourlyForecastComponent.vue';
+import { ILocation } from '@/interfaces/ILocation';
 
 const weather: IWeather = reactive({
   locationName: '',
@@ -29,7 +30,9 @@ const unit = ref('c');
 const forecasts: IForecast[] = reactive([]);
 const todayHourlyForecasts: IHourlyForecast[] = reactive([]);
 
-onMounted(() => {
+const props = defineProps<{ currentLocation: ILocation }>();
+
+const getWeatherInfos = () => {
   fetch(import.meta.env.VITE_VUE_APP_IP_API_URL)
     .then((res) =>
       res.json().then((data) => {
@@ -38,7 +41,12 @@ onMounted(() => {
         // Getting weather
         const url = new URL(import.meta.env.VITE_VUE_APP_API_URL + 'current.json');
         url.searchParams.append('key', import.meta.env.VITE_VUE_APP_API_KEY);
-        url.searchParams.append('q', ip);
+        url.searchParams.append(
+          'q',
+          props.currentLocation && props.currentLocation.name == ''
+            ? ip
+            : props.currentLocation.lat + ',' + props.currentLocation.long
+        );
 
         fetch(url.toString())
           .then((res) => res.json())
@@ -56,12 +64,11 @@ onMounted(() => {
             weather.temp_c = data.current.temp_c;
             weather.temp_f = data.current.temp_f;
             weather.uv = data.current.uv;
-
             dataReady.value = true;
-
-            console.log(weather);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+          });
 
         // Getting daily forecast
         const urlForecasts = new URL(import.meta.env.VITE_VUE_APP_API_URL + 'forecast.json');
@@ -87,9 +94,6 @@ onMounted(() => {
 
                   todayHourlyForecasts.push(hourlyForecast);
                 });
-
-                console.log('Hourly:');
-                console.log(todayHourlyForecasts);
               }
 
               const forecast: IForecast = {
@@ -103,9 +107,6 @@ onMounted(() => {
 
               forecasts.push(forecast);
             });
-
-            console.log('Forecasts: ');
-            console.log(forecasts);
           })
           .catch((err) => {
             console.log(err);
@@ -115,13 +116,24 @@ onMounted(() => {
     .catch((err) => {
       console.log(err);
     });
+};
+
+onMounted(getWeatherInfos);
+watch(props.currentLocation, () => {
+  while (forecasts.length > 0) {
+    forecasts.pop();
+  }
+  while (todayHourlyForecasts.length > 0) {
+    todayHourlyForecasts.pop();
+  }
+  getWeatherInfos();
 });
 </script>
 
 <template>
   <div class="main">
     <CurrentWeather :dataReady="dataReady" :weather="weather" :unit="unit" />
-    <MapComponent />
+    <MapComponent :currentLocation="currentLocation" />
     <div>3</div>
     <ForecastComponent :forecasts="forecasts" :unit="unit" />
     <HourlyForecastComponent :todayHourlyForecasts="todayHourlyForecasts" :unit="unit" />
