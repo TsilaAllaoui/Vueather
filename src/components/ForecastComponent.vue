@@ -70,8 +70,8 @@ function formatDate(dateString: string): string {
     width: 95%;
     display: flex;
     gap: 1rem;
-    align-items: center;
-    padding: 0.5rem;
+    align-items: space-evenly;
+    padding-bottom: 0.5rem;
     border-radius: 10px;
 
     &:hover {

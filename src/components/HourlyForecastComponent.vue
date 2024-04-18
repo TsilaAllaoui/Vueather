@@ -23,7 +23,7 @@ defineProps<{
           :title="forecast.condition.toString()"
         >
           <p>{{ forecast.time }}</p>
-          <p class="temp">{{ unit == 'c' ? forecast.temp_c : forecast.temp_f }}</p>
+          <p class="temp">{{ unit == 'c' ? forecast.temp_c + '°C' : forecast.temp_f + '°F' }}</p>
           <img :src="forecast.icon.toString()" />
         </div>
       </div>
