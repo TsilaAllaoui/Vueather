@@ -27,10 +27,10 @@ const upadetRecentLocations = (newLocation?: ILocation) => {
     return;
   }
 
-  recentLocations.push(newLocation!);
   const recentsInCache = localStorage.getItem('recents');
 
   if (!recentsInCache) {
+    recentLocations.push(newLocation!);
     localStorage.setItem('recents', '');
     localStorage.setItem('recents', JSON.stringify(newLocation));
     return;
@@ -49,6 +49,7 @@ const upadetRecentLocations = (newLocation?: ILocation) => {
     recentLocations.push(locationItem);
   });
 
+  recentLocations.push(newLocation!);
   localStorage.setItem(
     'recents',
     localStorage.getItem('recents') + '||' + JSON.stringify(newLocation)
