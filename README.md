@@ -1,39 +1,29 @@
-# weather
+# 🌧️ Vueather 🌤️
 
-This template should help get you started developing with Vue 3 in Vite.
+Vueather is a weather application built using Vue.js, Sass, and TypeScript. It allows users to check the weather forecast for their location and explore weather details in a visually appealing way.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- View current weather conditions including temperature, humidity, and wind speed.
+- Check the weather forecast for the upcoming days.
+- Interactive map component to visualize weather patterns.
+- Responsive design for seamless experience across devices.
 
-## Type Support for `.vue` Imports in TS
+## Demo
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+Check out the live demo of Vueather at [https://vueather.netlify.app/](https://vueather.netlify.app/)
 
-## Customize configuration
+## Technologies Used
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Vue.js
+- Sass (SCSS)
+- TypeScript
+- weatherapi API for weather data
+- OpenLayers for map component
 
-## Project Setup
+## Building
 
-```sh
-yarn
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-yarn dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-yarn build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-yarn lint
-```
+- Get yoursel an API Key at [https://weatherapi.com](https://weatherapi.com)
+- Modify the .env accrodingly
+- Run yarn in project or npm install
+- View with preffered browser 
