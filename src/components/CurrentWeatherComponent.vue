@@ -24,7 +24,7 @@ onMounted(() => setTime());
 <template>
   <div v-if="dataReady" class="current-weather">
     <div class="header">
-      <p><b>Current Weather</b></p>
+      <h1>Current Weather</h1>
       <p>{{ time }}</p>
     </div>
     <div class="condition">
@@ -78,9 +78,16 @@ onMounted(() => setTime());
     justify-content: flex-start;
     align-items: flex-start;
     gap: 0.5rem;
+    padding: 0;
 
     p {
       margin: 0;
+      font-size: 23px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: $h1Size;
     }
   }
 

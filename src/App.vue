@@ -19,11 +19,57 @@ const updateCurrentLocation = (location: ILocation) => {
   currentLocation.lat = location.lat;
   currentLocation.long = location.long;
 };
+
+const recentLocations: ILocation[] = reactive<ILocation[]>([]);
+
+const upadetRecentLocations = (newLocation?: ILocation) => {
+  if (!newLocation) {
+    return;
+  }
+
+  const recentsInCache = localStorage.getItem('recents');
+
+  if (recentsInCache == '') {
+    recentLocations.push(newLocation!);
+    localStorage.setItem('recents', JSON.stringify(newLocation));
+    return;
+  }
+
+  const recentsArray = recentsInCache!.split('||');
+  if (recentsArray.includes(JSON.stringify(location))) {
+    return;
+  }
+
+  while (recentLocations.length > 0) {
+    recentLocations.pop();
+  }
+
+  recentsInCache!.split('||').forEach((location) => {
+    const locationItem: ILocation = JSON.parse(location);
+    recentLocations.push(locationItem);
+  });
+
+  recentLocations.push(newLocation);
+  localStorage.setItem(
+    'recents',
+    localStorage.getItem('recents') + '||' + JSON.stringify(newLocation)
+  );
+
+  console.log('HeaderComponent -> ');
+  console.log(recentLocations);
+};
 </script>
 
 <template>
-  <HeaderComponent @current-location="updateCurrentLocation" />
-  <MainComponent :currentLocation="currentLocation" />
+  <HeaderComponent
+    @updateCurrentLocation="updateCurrentLocation"
+    @updateRecentLocations="upadetRecentLocations"
+  />
+  <MainComponent
+    :currentLocation="currentLocation"
+    :recentLocations="recentLocations"
+    @updateCurrentLocation="updateCurrentLocation"
+  />
 </template>
 
 <style lang="scss">

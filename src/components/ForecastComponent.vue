@@ -18,7 +18,7 @@ function formatDate(dateString: string): string {
 
 <template>
   <div v-if="forecasts.length > 0" class="forecasts">
-    <p>Forecast</p>
+    <h1>Forecast</h1>
     <div v-for="(forecast, index) in forecasts" :key="index" class="forecast">
       <div class="info">
         <img :src="forecast.icon.toString()" />
@@ -57,26 +57,30 @@ function formatDate(dateString: string): string {
     font-size: 0.75rem;
   }
 
-  & > p {
+  h1 {
     display: flex;
     align-items: center;
     margin-left: 1rem;
     margin-top: 1rem;
     margin-bottom: 1rem;
-    font-size: 20px;
+    font-size: $h1Size;
   }
 
   .forecast {
-    width: 95%;
+    width: 100%;
     display: flex;
-    gap: 1rem;
-    align-items: space-evenly;
+    align-items: center;
+    justify-content: space-between;
     padding-bottom: 0.5rem;
     border-radius: 10px;
 
     &:hover {
       background-color: $main;
       transition: background-color 250ms ease-in-out;
+    }
+
+    p {
+      margin-right: 0.5rem;
     }
 
     .info {

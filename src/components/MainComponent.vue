@@ -2,12 +2,13 @@
 import CurrentWeather from './CurrentWeatherComponent.vue';
 import ForecastComponent from './ForecastComponent.vue';
 import MapComponent from './MapComponent.vue';
-import { ref, reactive, onMounted, watch } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { IWeather } from '@/interfaces/IWeather';
 import { IForecast } from '@/interfaces/IForecast';
 import { IHourlyForecast } from '@/interfaces/IHourlyForecast';
 import HourlyForecastComponent from './HourlyForecastComponent.vue';
 import { ILocation } from '@/interfaces/ILocation';
+import RecentSearches from './RecentSearchesComponent.vue';
 
 const weather: IWeather = reactive({
   locationName: '',
@@ -30,7 +31,10 @@ const unit = ref('c');
 const forecasts: IForecast[] = reactive([]);
 const todayHourlyForecasts: IHourlyForecast[] = reactive([]);
 
-const props = defineProps<{ currentLocation: ILocation }>();
+const props = defineProps<{
+  currentLocation: ILocation;
+  recentLocations: ILocation[];
+}>();
 
 const getWeatherInfos = () => {
   fetch(import.meta.env.VITE_VUE_APP_IP_API_URL)
@@ -73,12 +77,25 @@ const getWeatherInfos = () => {
         // Getting daily forecast
         const urlForecasts = new URL(import.meta.env.VITE_VUE_APP_API_URL + 'forecast.json');
         urlForecasts.searchParams.append('key', import.meta.env.VITE_VUE_APP_API_KEY);
-        urlForecasts.searchParams.append('q', ip);
+        urlForecasts.searchParams.append(
+          'q',
+          props.currentLocation && props.currentLocation.name == ''
+            ? ip
+            : props.currentLocation.lat + ',' + props.currentLocation.long
+        );
         urlForecasts.searchParams.append('days', '6');
 
         fetch(urlForecasts.toString())
           .then((res) => res.json())
           .then((data) => {
+            while (forecasts.length > 0) {
+              forecasts.pop();
+            }
+
+            while (todayHourlyForecasts.length > 0) {
+              todayHourlyForecasts.pop();
+            }
+
             const forecastdays = data.forecast.forecastday;
             forecastdays.forEach((forecastday: any, index: number) => {
               if (index == 0) {
@@ -118,23 +135,23 @@ const getWeatherInfos = () => {
     });
 };
 
-onMounted(getWeatherInfos);
-watch(props.currentLocation, () => {
-  while (forecasts.length > 0) {
-    forecasts.pop();
-  }
-  while (todayHourlyForecasts.length > 0) {
-    todayHourlyForecasts.pop();
-  }
-  getWeatherInfos();
-});
+watch(props.currentLocation, () => getWeatherInfos());
+
+const emit = defineEmits(['updateCurrentLocation']);
+
+const updateCurrentLocation = (newLocation: ILocation) => {
+  emit('updateCurrentLocation', newLocation);
+};
 </script>
 
 <template>
   <div class="main">
     <CurrentWeather :dataReady="dataReady" :weather="weather" :unit="unit" />
     <MapComponent :currentLocation="currentLocation" />
-    <div>3</div>
+    <RecentSearches
+      :recentLocations="props.recentLocations"
+      :updateCurrentLocation="updateCurrentLocation"
+    />
     <ForecastComponent :forecasts="forecasts" :unit="unit" />
     <HourlyForecastComponent :todayHourlyForecasts="todayHourlyForecasts" :unit="unit" />
   </div>

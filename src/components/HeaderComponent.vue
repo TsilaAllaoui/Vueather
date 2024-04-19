@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ILocation } from '@/interfaces/ILocation';
-import { reactive, ref, watch, defineEmits, onMounted, computed } from 'vue';
+import { reactive, ref, watch, defineEmits, onMounted } from 'vue';
 
 const searchValue = ref<String>('');
 const locations: ILocation[] = reactive<ILocation[]>([]);
@@ -61,7 +61,7 @@ watch(
   { deep: true }
 );
 
-const emit = defineEmits(['currentLocation']);
+const emit = defineEmits(['updateCurrentLocation', 'updateRecentLocations']);
 
 const updateCurrentLocation = (location: ILocation) => {
   currentLocation.name = location.name;
@@ -74,7 +74,10 @@ const updateCurrentLocation = (location: ILocation) => {
     locations.pop();
   }
 
-  emit('currentLocation', currentLocation);
+  if (currentLocation) {
+    emit('updateCurrentLocation', currentLocation);
+    emit('updateRecentLocations', currentLocation);
+  }
 };
 
 const triggerSearch = (event: any) => {
@@ -110,6 +113,8 @@ onMounted(() => {
         });
     });
   });
+
+  emit('updateRecentLocations');
 });
 </script>
 
@@ -132,12 +137,12 @@ onMounted(() => {
           @click="updateCurrentLocation(location)"
         >
           {{
-            location.name.length + location.subname.length > 20
+            location.name.length + location.subname.length > 15
               ? location.name.toString() +
                 (location.subname != ''
                   ? ' ( ' + location.subname.toString() + ' )'
                   : ''
-                ).substring(0, 20)
+                ).substring(0, 15)
               : location.name.toString() +
                 (location.subname != '' ? ' ( ' + location.subname.toString() + ' )' : '')
           }}
@@ -145,10 +150,6 @@ onMounted(() => {
       </div>
     </div>
     <p class="location-name">{{ currentLocation?.name }}</p>
-    <div class="user">
-      <v-icon name="hi-bell" scale="1.5" class="icon" animation="ring" speed="slow" />
-      <div class="user-pic"></div>
-    </div>
   </div>
 </template>
 
@@ -169,10 +170,13 @@ onMounted(() => {
     color: white;
     font-size: 25px;
     font-weight: bold;
+    position: absolute;
+    left: 50%;
   }
 
   .search {
     position: relative;
+    margin: 1rem 0;
 
     .input {
       display: flex;
@@ -221,29 +225,6 @@ onMounted(() => {
       }
 
       background-color: $light;
-    }
-  }
-
-  .user {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-
-    svg {
-      background-color: $dark;
-      border-radius: 100%;
-      padding: 5px;
-    }
-
-    .user-pic {
-      border-radius: 100%;
-      width: 2.25rem;
-      aspect-ratio: 1;
-      background-image: url(user.svg);
-      background-size: 75%;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-color: white;
     }
   }
 }
