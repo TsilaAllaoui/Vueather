@@ -81,7 +81,6 @@ const updateCurrentLocation = (location: ILocation) => {
 };
 
 const triggerSearch = (event: any) => {
-  console.log(event.target.value);
   searchValue.value = event.target.value;
 };
 

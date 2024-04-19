@@ -29,7 +29,8 @@ const upadetRecentLocations = (newLocation?: ILocation) => {
 
   const recentsInCache = localStorage.getItem('recents');
 
-  if (recentsInCache == '') {
+  if (!recentsInCache) {
+    localStorage.setItem('recents', '');
     recentLocations.push(newLocation!);
     localStorage.setItem('recents', JSON.stringify(newLocation));
     return;
@@ -54,9 +55,6 @@ const upadetRecentLocations = (newLocation?: ILocation) => {
     'recents',
     localStorage.getItem('recents') + '||' + JSON.stringify(newLocation)
   );
-
-  console.log('HeaderComponent -> ');
-  console.log(recentLocations);
 };
 </script>
 
